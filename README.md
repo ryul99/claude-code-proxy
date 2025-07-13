@@ -67,11 +67,6 @@ BIG_MODEL=openai/gpt-4.1 SMALL_MODEL=openai/gpt-4.1 claude-proxy
     ANTHROPIC_BASE_URL=http://localhost:8082 claude
     ```
 
-    Or (run claude-proxy CLI directly and connect):
-    ```bash
-    ANTHROPIC_BASE_URL=http://localhost:8082 claude-proxy
-    ```
-
 3.  **That's it!** Your Claude Code client will now use the configured backend models through the proxy. 🎯
 
 ## Model Mapping 🗺️
