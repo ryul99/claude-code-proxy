@@ -49,10 +49,11 @@ A proxy server that lets you use Anthropic clients with any LLM provider support
     *(`--reload` is optional, for development)*
 
 ### Or simply use the CLI
-    ```bash
-    uv tool install 'git+https://github.com/ryul99/claude-code-proxy.git'
-    BIG_MODEL=openai/gpt-4o SMALL_MODEL=openai/gpt-4o-mini claude-proxy
-    ```
+
+```bash
+uv tool install 'git+https://github.com/ryul99/claude-code-proxy.git'
+BIG_MODEL=openai/gpt-4.1 SMALL_MODEL=openai/gpt-4.1 claude-proxy
+```
 
 ### Using with Claude Code 🎮
 
