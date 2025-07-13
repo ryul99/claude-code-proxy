@@ -1548,12 +1548,16 @@ def log_request_beautifully(
     sys.stdout.flush()
 
 
-if __name__ == "__main__":
-    import sys
-
+def main():
+    """Entry point to run the proxy server."""
     if len(sys.argv) > 1 and sys.argv[1] == "--help":
-        print("Run with: uvicorn server:app --reload --host 0.0.0.0 --port 8082")
+        print("Usage: uvicorn server:app --reload --host 0.0.0.0 --port 8082")
+        print("After installation, you can also run 'claude-proxy'")
         sys.exit(0)
 
     # Configure uvicorn to run with minimal logs
     uvicorn.run(app, host="0.0.0.0", port=8082, log_level="error")
+
+
+if __name__ == "__main__":
+    main()

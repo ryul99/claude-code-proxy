@@ -13,6 +13,9 @@ dependencies = [
     "python-dotenv>=1.0.0",
 ]
 
+[project.scripts]
+claude-proxy = "server:main"
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.2.0",

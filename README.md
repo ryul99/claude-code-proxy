@@ -42,6 +42,10 @@ A proxy server that lets you use Anthropic clients with any LLM provider support
     ```bash
     uv run uvicorn server:app --host 0.0.0.0 --port 8082 --reload
     ```
+    *(or)*
+    ```bash
+    claude-proxy --host 0.0.0.0 --port 8082 --reload
+    ```
     *(`--reload` is optional, for development)*
 
 ### Using with Claude Code 🎮
@@ -54,6 +58,11 @@ A proxy server that lets you use Anthropic clients with any LLM provider support
 2.  **Connect to your proxy**:
     ```bash
     ANTHROPIC_BASE_URL=http://localhost:8082 claude
+    ```
+
+    Or (run claude-proxy CLI directly and connect):
+    ```bash
+    ANTHROPIC_BASE_URL=http://localhost:8082 claude-proxy
     ```
 
 3.  **That's it!** Your Claude Code client will now use the configured backend models through the proxy. 🎯
@@ -70,6 +79,7 @@ You **must** use the correct model identifier as required by LiteLLM, which typi
 ### Customizing Model Mapping
 
 Control the mapping by setting the environment variables in your `.env` file.
+If you use cli command `claude-proxy`, you should set the environment variables in your shell or pass them directly in the command line.
 
 **Example 1: Default (Use OpenAI)**
 ```dotenv
