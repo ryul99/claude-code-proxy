@@ -90,34 +90,6 @@ BIG_MODEL = os.environ.get("BIG_MODEL", "openai/gpt-4.1")
 SMALL_MODEL = os.environ.get("SMALL_MODEL", "openai/gpt-4.1-mini")
 
 
-# Helper function to clean schema for Gemini
-def clean_gemini_schema(schema: Any) -> Any:
-    """Recursively removes unsupported fields from a JSON schema for Gemini."""
-    if isinstance(schema, dict):
-        # Remove specific keys unsupported by Gemini tool parameters
-        schema.pop("additionalProperties", None)
-        schema.pop("default", None)
-
-        # Check for unsupported 'format' in string types
-        if schema.get("type") == "string" and "format" in schema:
-            allowed_formats = {"enum", "date-time"}
-            if schema["format"] not in allowed_formats:
-                logger.debug(
-                    f"Removing unsupported format '{schema['format']}' for string type in Gemini schema."
-                )
-                schema.pop("format")
-
-        # Recursively clean nested schemas (properties, items, etc.)
-        for key, value in list(
-            schema.items()
-        ):  # Use list() to allow modification during iteration
-            schema[key] = clean_gemini_schema(value)
-    elif isinstance(schema, list):
-        # Recursively clean items in a list
-        return [clean_gemini_schema(item) for item in schema]
-    return schema
-
-
 # Models for Anthropic API requests
 class ContentBlockText(BaseModel):
     type: Literal["text"]
@@ -216,11 +188,6 @@ class MessagesRequest(BaseModel):
         if mapped:
             logger.debug(f"📌 MODEL MAPPING: '{original_model}' ➡️ '{new_model}'")
         else:
-            # If no mapping occurred and no prefix exists, log warning or decide default
-            if not v.startswith(("openai/", "gemini/", "anthropic/")):
-                logger.warning(
-                    f"⚠️ No prefix or mapping rule for model: '{original_model}'. Using as is."
-                )
             new_model = v  # Ensure we return the original if no rule applied
 
         # Store the original model in the values dictionary
@@ -271,10 +238,6 @@ class TokenCountRequest(BaseModel):
         if mapped:
             logger.debug(f"📌 TOKEN COUNT MAPPING: '{original_model}' ➡️ '{new_model}'")
         else:
-            if not v.startswith(("openai/", "gemini/", "anthropic/")):
-                logger.warning(
-                    f"⚠️ No prefix or mapping rule for token count model: '{original_model}'. Using as is."
-                )
             new_model = v  # Ensure we return the original if no rule applied
 
         # Store the original model in the values dictionary
@@ -544,12 +507,10 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
 
     # Cap max_tokens for OpenAI models to their limit of 16384
     max_tokens = anthropic_request.max_tokens
-    if anthropic_request.model.startswith(
-        "openai/"
-    ) or anthropic_request.model.startswith("gemini/"):
+    if not anthropic_request.model.startswith("anthropic/"):
         max_tokens = min(max_tokens, 16384)
         logger.debug(
-            f"Capping max_tokens to 16384 for OpenAI/Gemini model (original value: {anthropic_request.max_tokens})"
+            f"Capping max_tokens to 16384 for non-Anthropic model (original value: {anthropic_request.max_tokens})"
         )
 
     # Create LiteLLM request dict
@@ -574,7 +535,6 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
     # Convert tools to OpenAI format
     if anthropic_request.tools:
         openai_tools = []
-        is_gemini_model = anthropic_request.model.startswith("gemini/")
 
         for tool in anthropic_request.tools:
             # Convert to dict if it's a pydantic model
@@ -588,13 +548,7 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
                     logger.error(f"Could not convert tool to dict: {tool}")
                     continue  # Skip this tool if conversion fails
 
-            # Clean the schema if targeting a Gemini model
             input_schema = tool_dict.get("input_schema", {})
-            if is_gemini_model:
-                logger.debug(
-                    f"Cleaning schema for Gemini tool: {tool_dict.get('name')}"
-                )
-                input_schema = clean_gemini_schema(input_schema)
 
             # Create OpenAI-compatible function tool
             openai_tool = {
