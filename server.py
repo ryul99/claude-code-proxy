@@ -147,7 +147,7 @@ class MessagesRequest(BaseModel):
         new_model = v  # Default to original value
 
         logger.debug(
-            f"📋 MODEL VALIDATION: Original='{original_model}', BIG='{BIG_MODEL}', SMALL='{SMALL_MODEL}'"
+            f"MODEL VALIDATION: Original='{original_model}', BIG='{BIG_MODEL}', SMALL='{SMALL_MODEL}'"
         )
 
         clean_v = v
@@ -167,7 +167,7 @@ class MessagesRequest(BaseModel):
         # --- Mapping Logic --- END ---
 
         if mapped:
-            logger.debug(f"📌 MODEL MAPPING: '{original_model}' ➡️ '{new_model}'")
+            logger.debug(f"MODEL MAPPING: '{original_model}' -> '{new_model}'")
         else:
             new_model = v  # Ensure we return the original if no rule applied
 
@@ -197,7 +197,7 @@ class TokenCountRequest(BaseModel):
         new_model = v  # Default to original value
 
         logger.debug(
-            f"📋 TOKEN COUNT VALIDATION: Original='{original_model}', BIG='{BIG_MODEL}', SMALL='{SMALL_MODEL}'"
+            f"TOKEN COUNT VALIDATION: Original='{original_model}', BIG='{BIG_MODEL}', SMALL='{SMALL_MODEL}'"
         )
 
         clean_v = v
@@ -217,7 +217,7 @@ class TokenCountRequest(BaseModel):
         # --- Mapping Logic --- END ---
 
         if mapped:
-            logger.debug(f"📌 TOKEN COUNT MAPPING: '{original_model}' ➡️ '{new_model}'")
+            logger.debug(f"TOKEN COUNT MAPPING: '{original_model}' -> '{new_model}'")
         else:
             new_model = v  # Ensure we return the original if no rule applied
 
@@ -1114,7 +1114,7 @@ async def create_message(request: MessagesRequest, raw_request: Request):
             display_model = display_model.split("/")[-1]
 
         logger.debug(
-            f"📊 PROCESSING REQUEST: Model={request.model}, Stream={request.stream}"
+            f"PROCESSING REQUEST: Model={request.model}, Stream={request.stream}"
         )
 
         # Convert Anthropic request to LiteLLM format
@@ -1354,7 +1354,7 @@ async def create_message(request: MessagesRequest, raw_request: Request):
             start_time = time.time()
             litellm_response = litellm.completion(**litellm_request)
             logger.debug(
-                f"✅ RESPONSE RECEIVED: Model={litellm_request.get('model')}, Time={time.time() - start_time:.2f}s"
+                f"RESPONSE RECEIVED: Model={litellm_request.get('model')}, Time={time.time() - start_time:.2f}s"
             )
 
             # Convert LiteLLM response to Anthropic format
