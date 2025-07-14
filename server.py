@@ -24,8 +24,8 @@ SMALL_MODEL = os.environ.get("SMALL_MODEL", "openai/gpt-4.1-mini")
 
 logging.basicConfig(
     format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler()],
+    datefmt="",
+    handlers=[RichHandler(show_time=False)],
 )
 logger = logging.getLogger("rich")
 
