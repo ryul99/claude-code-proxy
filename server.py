@@ -13,14 +13,21 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, field_validator
+from rich.logging import RichHandler
 
 # Load environment variables from .env file
 load_dotenv()
 
+LLM_API_KEY = os.environ.get("LLM_API_KEY")
+BIG_MODEL = os.environ.get("BIG_MODEL", "openai/gpt-4.1")
+SMALL_MODEL = os.environ.get("SMALL_MODEL", "openai/gpt-4.1-mini")
+
 logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler()],
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("rich")
 
 
 # Create a filter to block any log messages containing specific strings
@@ -47,40 +54,21 @@ root_logger = logging.getLogger()
 root_logger.addFilter(MessageFilter())
 
 
-# Custom formatter for model mapping logs
-class ColorizedFormatter(logging.Formatter):
-    """Custom formatter to highlight model mappings"""
-
+# Define ANSI color codes for terminal output
+class Colors:
+    CYAN = "\033[96m"
     BLUE = "\033[94m"
     GREEN = "\033[92m"
     YELLOW = "\033[93m"
     RED = "\033[91m"
+    MAGENTA = "\033[95m"
     RESET = "\033[0m"
     BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    DIM = "\033[2m"
 
-    def format(self, record):
-        if record.levelno == logging.debug and "MODEL MAPPING" in record.msg:
-            # Apply colors and formatting to model mapping logs
-            return f"{self.BOLD}{self.GREEN}{record.msg}{self.RESET}"
-        return super().format(record)
-
-
-# Apply custom formatter to console handler
-for handler in logger.handlers:
-    if isinstance(handler, logging.StreamHandler):
-        handler.setFormatter(
-            ColorizedFormatter("%(asctime)s - %(levelname)s - %(message)s")
-        )
 
 app = FastAPI()
-
-# Get API keys from environment
-LLM_API_KEY = os.environ.get("LLM_API_KEY")
-
-# Get model mapping configuration from environment
-# Default to latest OpenAI models if not set
-BIG_MODEL = os.environ.get("BIG_MODEL", "openai/gpt-4.1")
-SMALL_MODEL = os.environ.get("SMALL_MODEL", "openai/gpt-4.1-mini")
 
 
 # Models for Anthropic API requests
@@ -1486,20 +1474,6 @@ async def count_tokens(request: TokenCountRequest, raw_request: Request):
 @app.get("/")
 async def root():
     return {"message": "Anthropic Proxy for LiteLLM"}
-
-
-# Define ANSI color codes for terminal output
-class Colors:
-    CYAN = "\033[96m"
-    BLUE = "\033[94m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    RED = "\033[91m"
-    MAGENTA = "\033[95m"
-    RESET = "\033[0m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
-    DIM = "\033[2m"
 
 
 def log_request_beautifully(
