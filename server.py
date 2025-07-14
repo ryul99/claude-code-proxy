@@ -1,33 +1,26 @@
-from fastapi import FastAPI, Request, HTTPException
-import uvicorn
-import logging
+import argparse
 import json
-from pydantic import BaseModel, field_validator
-from typing import List, Dict, Any, Optional, Union, Literal
+import logging
 import os
-from fastapi.responses import StreamingResponse
-import litellm
-import uuid
-import time
-from dotenv import load_dotenv
 import sys
+import time
+import uuid
+from typing import Any, Dict, List, Literal, Optional, Union
+
+import litellm
+import uvicorn
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, field_validator
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Configure logging
 logging.basicConfig(
-    level=logging.WARN,  # Change to INFO level to show more details
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
-
-# Configure uvicorn to be quieter
-
-# Tell uvicorn's loggers to be quiet
-logging.getLogger("uvicorn").setLevel(logging.WARNING)
-logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
 
 
 # Create a filter to block any log messages containing specific strings
@@ -515,7 +508,7 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
 
     # Create LiteLLM request dict
     litellm_request = {
-        "model": anthropic_request.model,  # t understands "anthropic/claude-x" format
+        "model": anthropic_request.model,
         "messages": messages,
         "max_tokens": max_tokens,
         "temperature": anthropic_request.temperature,
@@ -1550,13 +1543,34 @@ def log_request_beautifully(
 
 def main():
     """Entry point to run the proxy server."""
-    if len(sys.argv) > 1 and sys.argv[1] == "--help":
-        print("Usage: uvicorn server:app --reload --host 0.0.0.0 --port 8082")
-        print("After installation, you can also run 'claude-proxy'")
-        sys.exit(0)
+    parser = argparse.ArgumentParser(description="Anthropic Proxy for LiteLLM")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Host to run the server on"
+    )
+    parser.add_argument(
+        "--port", type=int, default=8082, help="Port to run the server on"
+    )
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        default="error",
+        choices=["debug", "info", "warning", "error", "critical"],
+        help="Set the logging level",
+    )
+    args = parser.parse_args()
+
+    # Configure logging
+    logging.getLogger("uvicorn").setLevel(args.log_level.upper())
+    logging.getLogger("uvicorn.access").setLevel(args.log_level.upper())
+    logging.getLogger("uvicorn.error").setLevel(args.log_level.upper())
+    logger.setLevel(args.log_level.upper())
+
+    logger.info(
+        f"Starting Anthropic Proxy for LiteLLM on {args.host}:{args.port} with log level {args.log_level}"
+    )
 
     # Configure uvicorn to run with minimal logs
-    uvicorn.run(app, host="0.0.0.0", port=8082, log_level="error")
+    uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)
 
 
 if __name__ == "__main__":
