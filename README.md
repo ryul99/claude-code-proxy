@@ -19,7 +19,6 @@ A proxy server that lets you use Anthropic clients with any LLM provider support
 ### Prerequisites
 
 - An API key for your chosen LLM provider (e.g., OpenAI, Google, Anthropic, Cohere, etc.) 🔑
-- [uv](https://github.com/astral-sh/uv) installed.
 
 ### Setup
 
