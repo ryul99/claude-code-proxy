@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-claude-proxy = "server:main"
+claude-proxy = "src.server:main"
 
 [dependency-groups]
 dev = [
