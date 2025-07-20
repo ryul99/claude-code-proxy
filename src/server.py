@@ -1,7 +1,6 @@
 import argparse
 import json
 import logging
-import os
 import sys
 import time
 import uuid
@@ -14,8 +13,6 @@ from rich.logging import RichHandler
 
 from src.api_type import MessagesRequest, TokenCountRequest, TokenCountResponse
 from src.convert import convert_anthropic_to_litellm, convert_litellm_to_anthropic
-
-LLM_API_KEY = os.environ.get("LLM_API_KEY")
 
 logging.basicConfig(
     format="%(message)s",
@@ -446,9 +443,6 @@ async def create_message(request: MessagesRequest, raw_request: Request):
 
         # Convert Anthropic request to LiteLLM format
         litellm_request = convert_anthropic_to_litellm(request)
-
-        # Determine which API key to use based on the model
-        litellm_request["api_key"] = LLM_API_KEY
 
         # Only log basic info about the request, not the full details
         logger.debug(
