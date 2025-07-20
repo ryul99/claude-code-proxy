@@ -97,6 +97,7 @@ class TokenCountRequest(BaseModel):
     original_model: Optional[str] = None  # Will store the original model name
 
     @field_validator("model")
+    @classmethod
     def validate_model_token_count(cls, v, info):  # Renamed to avoid conflict
         # Use the same logic as MessagesRequest validator
         # NOTE: Pydantic validators might not share state easily if not class methods
@@ -154,6 +155,7 @@ class MessagesRequest(BaseModel):
     original_model: Optional[str] = None  # Will store the original model name
 
     @field_validator("model")
+    @classmethod
     def validate_model_field(cls, v, info):  # Renamed to avoid conflict
         original_model = v
         new_model = v  # Default to original value
