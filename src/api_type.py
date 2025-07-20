@@ -67,7 +67,8 @@ class Tool(BaseModel):
 
 
 class ThinkingConfig(BaseModel):
-    enabled: bool
+    type: Optional[str] = None
+    budget_tokens: Optional[int] = None
 
 
 class TokenCountResponse(BaseModel):
