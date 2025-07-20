@@ -10,6 +10,7 @@ A proxy server that lets you use Anthropic clients with any LLM provider support
 
 - **Universal LLM Support**: Expanded from only supporting OpenAI and Gemini to supporting any LLM provider compatible with LiteLLM.
 - **Reliable Tool Calling**: Replaced manual, text handling based tool call handling with OpenAI format based LiteLLM's robust, native translation. This improves the reliability and consistency of tool usage across all models.
+- **Fixed thinking budget issues**: The proxy now correctly handles the `thinking_budget` parameter which is enabled by `think hard`, `ultrathink`, etc.
 - **Easy Installation and Execution**: Packaged for easy installation via `pip`, `pipx`, or `uv`, and can be run directly with the `claude-proxy` command, eliminating the need for manual cloning and setup.
 - **Simplified Configuration**: Replaced the complex `.env` file with straightforward environment variables (`BIG_MODEL`, `SMALL_MODEL`) for easier setup.
 - **Improved Code Quality**: The codebase has been refactored for clarity and maintainability, with `pre-commit` hooks integrated to ensure consistent code standards.
