@@ -148,6 +148,19 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
     #         f"Capping max_tokens to 16384 for non-Anthropic model (original value: {anthropic_request.max_tokens})"
     #     )
 
+    # Convert thinking configuration to OpenAI format if present
+    reasoning_effort = None
+    if anthropic_request.thinking and anthropic_request.thinking.type == "enabled":
+        if anthropic_request.thinking.budget_tokens <= 1024:
+            reasoning_effort = "low"
+        elif anthropic_request.thinking.budget_tokens <= 2048:
+            reasoning_effort = "medium"
+        else:
+            reasoning_effort = "high"
+        logger.debug(
+            f"Converted thinking configuration {anthropic_request.thinking} to reasoning_effort: {reasoning_effort}"
+        )
+
     # Create LiteLLM request dict
     litellm_request = {
         "model": anthropic_request.model,
@@ -155,10 +168,12 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
         "max_tokens": max_tokens,
         "temperature": anthropic_request.temperature,
         "stream": anthropic_request.stream,
-        "thinking": anthropic_request.thinking,
     }
 
     # Add optional parameters if present
+    if reasoning_effort:
+        litellm_request["reasoning_effort"] = reasoning_effort
+
     if anthropic_request.stop_sequences:
         litellm_request["stop"] = anthropic_request.stop_sequences
 
