@@ -81,54 +81,6 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-# Not using validation function as we're using the environment API key
-
-
-def parse_tool_result_content(content):
-    """Helper function to properly parse and normalize tool result content."""
-    if content is None:
-        return "No content provided"
-
-    if isinstance(content, str):
-        return content
-
-    if isinstance(content, list):
-        result = ""
-        for item in content:
-            if isinstance(item, dict) and item.get("type") == "text":
-                result += item.get("text", "") + "\n"
-            elif isinstance(item, str):
-                result += item + "\n"
-            elif isinstance(item, dict):
-                if "text" in item:
-                    result += item.get("text", "") + "\n"
-                else:
-                    try:
-                        result += json.dumps(item) + "\n"
-                    except:
-                        result += str(item) + "\n"
-            else:
-                try:
-                    result += str(item) + "\n"
-                except:
-                    result += "Unparseable content\n"
-        return result.strip()
-
-    if isinstance(content, dict):
-        if content.get("type") == "text":
-            return content.get("text", "")
-        try:
-            return json.dumps(content)
-        except:
-            return str(content)
-
-    # Fallback for any other type
-    try:
-        return str(content)
-    except:
-        return "Unparseable content"
-
-
 async def handle_streaming(response_generator, original_request: MessagesRequest):
     """Handle streaming responses from LiteLLM and convert to Anthropic format."""
     try:
