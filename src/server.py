@@ -549,13 +549,6 @@ async def count_tokens(request: TokenCountRequest, raw_request: Request):
         if "/" in display_model:
             display_model = display_model.split("/")[-1]
 
-        # Clean model name for capability check
-        clean_model = request.model
-        if clean_model.startswith("anthropic/"):
-            clean_model = clean_model[len("anthropic/") :]
-        elif clean_model.startswith("openai/"):
-            clean_model = clean_model[len("openai/") :]
-
         # Convert the messages to a format LiteLLM can understand
         converted_request = convert_anthropic_to_litellm(
             MessagesRequest(
