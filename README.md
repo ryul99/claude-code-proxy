@@ -77,13 +77,13 @@ BIG_MODEL="openai/gpt-4o" SMALL_MODEL="openai/gpt-4o-mini" claude-proxy
 **Example 2: Use Google Models**
 ```bash
 export GEMINI_API_KEY="your-google-key"
-BIG_MODEL="gemini/gemini-1.5-pro-latest" SMALL_MODEL="gemini/gemini-1.5-flash-latest" claude-proxy
+BIG_MODEL="gemini/gemini-2.5-pro" SMALL_MODEL="gemini/gemini-2.5-flash" claude-proxy
 ```
 
 **Example 3: Use Anthropic Models**
 ```bash
 export ANTHROPIC_API_KEY="your-anthropic-key"
-BIG_MODEL="anthropic/claude-3-5-sonnet-20240620" SMALL_MODEL="anthropic/claude-3-haiku-20240307"
+BIG_MODEL="anthropic/claude-sonnet-4-20250514" SMALL_MODEL="anthropic/claude-3-haiku-20240307"
 ```
 
 API keys for the respective providers must be set in your environment variables. The proxy will automatically use these keys to authenticate requests to the LLM provider.
