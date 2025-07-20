@@ -24,6 +24,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("rich")
 
+# Drop unsupported parameters in LiteLLM requests (e.g. "thinking")
+litellm.drop_params = True
+
 
 # Create a filter to block any log messages containing specific strings
 class MessageFilter(logging.Filter):

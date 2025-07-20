@@ -155,6 +155,7 @@ def convert_anthropic_to_litellm(anthropic_request: MessagesRequest) -> Dict[str
         "max_tokens": max_tokens,
         "temperature": anthropic_request.temperature,
         "stream": anthropic_request.stream,
+        "thinking": anthropic_request.thinking,
     }
 
     # Add optional parameters if present
