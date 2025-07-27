@@ -1,3 +1,42 @@
+# DEPRECATED: Just use litellm proxy instead
+
+litellm proxy now supports Anthropic API Proxy for any LLM via LiteLLM. [docs](https://docs.litellm.ai/docs/tutorials/claude_responses_api)
+
+## Step 1: Install LiteLLM Proxy
+
+```bash
+uv tool install 'litellm[proxy]'
+# or
+pipx install 'litellm[proxy]'
+# or
+pip install 'litellm[proxy]'
+```
+
+## Step 2: Run the Proxy with configuration
+
+```bash
+cat <<\EOF >config.yaml
+model_list:
+  - model_name: "*"
+    litellm_params:
+      model: "*"
+EOF
+
+litellm --config config.yaml
+```
+
+## Step 3: Use the Proxy with Claude Code
+
+```bash
+export ANTHROPIC_BASE_URL=http://localhost:4000
+
+claude --model gemini/gemini-2.5-pro
+# or
+export ANTHROPIC_MODEL=gemini/gemini-2.5-pro
+export ANTHROPIC_SMALL_FAST_MODEL=gemini/gemini-2.5-flash
+claude
+```
+
 # Anthropic API Proxy for any LLM via LiteLLM 🔄
 
 **Use Anthropic clients (like Claude Code) with any LLM backend.** 🤝
